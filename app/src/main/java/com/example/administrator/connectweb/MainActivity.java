@@ -26,17 +26,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.listview);
-        loadingData =new LoadingData(this);
+        loadingData = new LoadingData(this); //與線上資料庫取得連結
         try {
-          list=loadingData.execute("https://juanyuanzhang.000webhostapp.com/db_connect.php").get();
+          list=loadingData.execute("https://juanyuanzhang.000webhostapp.com/db_connect.php").get();//使用get方法取得
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
-        contactAdapter = new ContactAdapter(this,list);
-        listView.setAdapter(contactAdapter);
+        contactAdapter = new ContactAdapter(this,list); //利用ContactAdapter取得資料
+        listView.setAdapter(contactAdapter);    //在用取得的資料顯示在listView
 
 
     }

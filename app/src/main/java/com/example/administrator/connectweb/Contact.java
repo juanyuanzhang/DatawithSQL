@@ -2,6 +2,8 @@ package com.example.administrator.connectweb;
 
 import android.graphics.Bitmap;
 
+//建立contact將取得的資料設定給變數用
+
 public class Contact {
     private Bitmap pic;
     private String name;

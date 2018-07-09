@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ContactAdapter extends BaseAdapter {  //自定Adapter
     private LayoutInflater layoutInflater;
-    private List<Contact> contactList ;
+    private List<Contact> contactList ;  //使用LIST陣列存放資料(JSON式陣列字串)
 
     public ContactAdapter(Context c , List<Contact> contactList) { //自定建構子
         layoutInflater = (LayoutInflater) c.getSystemService(c.LAYOUT_INFLATER_SERVICE);
