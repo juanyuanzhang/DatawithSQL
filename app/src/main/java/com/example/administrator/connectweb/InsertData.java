@@ -60,7 +60,7 @@ public class InsertData extends AsyncTask<String,Void,String> {
             re.writeBytes(this.twoHyphens+this.boundary+this.crlf);
             re.writeBytes("Content-Disposition: form-data; name=\"Name\"" + "\""+crlf);
             re.writeBytes(crlf);
-            re.writeBytes(getdata[0]);
+            re.write(getdata[0].getBytes());
             re.writeBytes(crlf);
             re.writeBytes(twoHyphens+boundary+crlf);
             re.writeBytes("Content-Disposition: form-data; name=\"Phone\"" + "\""+crlf);
