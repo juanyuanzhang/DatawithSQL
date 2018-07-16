@@ -3,9 +3,12 @@ package com.example.administrator.connectweb;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -37,7 +40,17 @@ public class MainActivity extends AppCompatActivity {
 
         contactAdapter = new ContactAdapter(this,list); //利用ContactAdapter取得資料
         listView.setAdapter(contactAdapter);    //在用取得的資料顯示在listView
-
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent();
+                i.putExtra("type","edit");
+                i.putExtra("name",list.get(position).getName());
+                Log.i("name=",list.get(position).getName());
+                i.setClass(MainActivity.this,EditActivity.class);
+                startActivity(i);
+            }
+        });
 
     }
 
@@ -50,7 +63,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent i = new Intent(this,EditActivity.class);
+        Intent i = new Intent();
+        //i.putExtra("type","new");
+        i.setClass(MainActivity.this,EditActivity.class);
         startActivity(i);
         return super.onOptionsItemSelected(item);
     }
