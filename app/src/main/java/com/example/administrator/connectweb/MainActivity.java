@@ -23,6 +23,12 @@ public class MainActivity extends AppCompatActivity {
     LoadingData loadingData;
     List<Contact> list;
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        contactAdapter.notifyDataSetChanged();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         contactAdapter = new ContactAdapter(this,list); //利用ContactAdapter取得資料
         listView.setAdapter(contactAdapter);    //在用取得的資料顯示在listView
+        contactAdapter.notifyDataSetChanged();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -23,11 +25,16 @@ public class UpdateData extends AsyncTask<String,Void,String>{
     String twoHyphens = "--";
     String boundary = "*****";
     String[] getdata ;
+    String attachmentFileName;
+    int bytesRead,bytesAvailable,bufferSize;
+    byte[] buffer ;
+    int maxBufferSize = 1*1024*1024;
 
-    public UpdateData(Context context, String[] data) {
+    public UpdateData(Context context, String[] data,String picturePath) {
         this.c = context;
         progressDialog = new ProgressDialog(c);
         this.getdata =data;
+        this.attachmentFileName = picturePath;
          }
 
     @Override
@@ -47,7 +54,36 @@ public class UpdateData extends AsyncTask<String,Void,String>{
 
             //建立資料串流
             DataOutputStream re = new DataOutputStream(connection.getOutputStream());
-            Log.i("string====>",re.toString());
+
+            if(this.attachmentFileName != null){
+                File sourceFile = new File(attachmentFileName);
+                FileInputStream fileInputStream = new FileInputStream(sourceFile);
+                re.writeBytes(this.twoHyphens+this.boundary+this.crlf);
+                re.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + this.attachmentFileName + "\""+crlf);
+                re.writeBytes(crlf);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable,maxBufferSize);
+                buffer = new byte[bufferSize];
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                //寫入串流
+                Log.i("bytesRead", String.valueOf(bytesRead));
+                while (bytesRead > 0) {
+
+                    re.write(buffer, 0, bufferSize);
+                    bytesAvailable = fileInputStream.available();
+                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                }
+                re.write(buffer);
+                re.writeBytes(this.crlf);
+            }else {
+                re.writeBytes(this.twoHyphens+this.boundary+this.crlf);
+                re.writeBytes("Content-Disposition: form-data; name=\"Picture\"" + "\""+crlf);
+                re.writeBytes(crlf);
+                re.writeBytes(getdata[5]);
+                re.writeBytes(crlf);
+            }
 
             re.writeBytes(this.twoHyphens+this.boundary+this.crlf);
             re.writeBytes("Content-Disposition: form-data; name=\"ContactID\"" + "\""+crlf);

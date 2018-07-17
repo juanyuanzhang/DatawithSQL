@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -17,12 +19,17 @@ public class InsertData extends AsyncTask<String,Void,String> {
     String twoHyphens = "--";
     String boundary = "*****";
     String[] getdata ;
+    String attachmentFileName ;
+    int bytesRead,bytesAvailable,bufferSize;
+    byte[] buffer;
+    int maxBufferSize=1*1024*1024;
 
 
-    public InsertData(Context context,String[] data) {
+    public InsertData(Context context,String[] data , String picturePath) {
         this.c = context;
         progressDialog = new ProgressDialog(c);
         this.getdata =data;
+        this.attachmentFileName = picturePath;
     }
 
     @Override
@@ -47,8 +54,8 @@ public class InsertData extends AsyncTask<String,Void,String> {
             HttpURLConnection connection =(HttpURLConnection) u.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
+            connection.setDoInput(true);
 
-            //connection.setDoInput(true);
             //設定標頭格式
             connection.setRequestProperty("Connection","Keep-Alive");
             connection.setRequestProperty("Cache-Control","no-cache");
@@ -57,7 +64,34 @@ public class InsertData extends AsyncTask<String,Void,String> {
 
             //建立資料串流
             DataOutputStream re = new DataOutputStream(connection.getOutputStream());
-            re.writeBytes(this.twoHyphens+this.boundary+this.crlf);
+
+            if(this.attachmentFileName != null) {
+                Log.i("picture1=",this.attachmentFileName);
+                File sourceFile = new File(attachmentFileName);
+                FileInputStream fileInputStream = new FileInputStream(sourceFile);
+                re.writeBytes(this.twoHyphens + this.boundary + this.crlf);
+                re.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\"" + this.attachmentFileName + "\"" + crlf);
+                re.writeBytes(crlf);
+                bytesAvailable = fileInputStream.available();
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                buffer = new byte[bufferSize];
+
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                //寫入串流
+                while (bytesRead > 0) {
+
+                    re.write(buffer, 0, bufferSize);
+                    bytesAvailable = fileInputStream.available();
+                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                }
+
+                re.write(buffer);
+                re.writeBytes(crlf);
+            }
+
+           re.writeBytes(this.twoHyphens+this.boundary+this.crlf);
             re.writeBytes("Content-Disposition: form-data; name=\"Name\"" + "\""+crlf);
             re.writeBytes(crlf);
             re.write(getdata[0].getBytes());

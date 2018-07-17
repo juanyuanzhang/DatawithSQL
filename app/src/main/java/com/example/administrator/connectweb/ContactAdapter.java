@@ -1,6 +1,7 @@
 package com.example.administrator.connectweb;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,10 @@ public class ContactAdapter extends BaseAdapter {  //自定Adapter
         TextView tvname = (TextView) convertView.findViewById(R.id.tvname);
         TextView tvphone = (TextView) convertView.findViewById(R.id.tvphone);
         TextView tvbirth = (TextView) convertView.findViewById(R.id.tvbirth);
+        if(data.getPic() != null){
+            pic.setImageBitmap(data.getPic());
+            Log.i("getPic=",data.getPic().toString());
+        }
         pic.setImageBitmap(data.getPic());
         tvname.setText(data.getName());
         tvphone.setText(data.getPhone());

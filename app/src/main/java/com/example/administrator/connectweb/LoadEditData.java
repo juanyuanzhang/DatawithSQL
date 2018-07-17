@@ -2,6 +2,7 @@ package com.example.administrator.connectweb;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -25,14 +26,14 @@ public class LoadEditData extends AsyncTask<String,Void,String[]> {
     String crlf = "\r\n";
     String twoHyphens = "--";
     String boundary = "*****";
-
+    private Bitmap oldpic;
     String queryName;
     URL u;
 
 
     public LoadEditData(Context context,  String queryName) {
         this.c = context;
-        //progressDialog = new ProgressDialog(c);
+        progressDialog = new ProgressDialog(c);
         this.queryName = queryName;
     }
 
@@ -83,23 +84,24 @@ public class LoadEditData extends AsyncTask<String,Void,String[]> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        //progressDialog.setMessage("連線中......");
-        //progressDialog.show();
+        progressDialog.setMessage("連線中......");
+        progressDialog.show();
     }
 
     @Override
     protected void onPostExecute(String[] s) {
         super.onPostExecute(s);
-        //progressDialog.dismiss();
+        progressDialog.dismiss();
     }
     private  String[] loadContact(JSONObject obj) throws JSONException{
         String id =obj.getString("ContactID");
+        String pic =obj.getString("Picture");
         String name = obj.getString("Name");
         String phoneNum = obj.getString("Phone");
         String email = obj.getString("Email");
         String birth = obj.getString("Birthday");
-        Log.v("jsonObj",obj.getString("Name"));
-        String[]old_data = new String[]{id,name,phoneNum,email,birth};
+        Log.v("jsonObj",obj.getString("Picture").toString());
+        String[]old_data = new String[]{id,name,phoneNum,email,birth,pic};
         return old_data;
 
     }

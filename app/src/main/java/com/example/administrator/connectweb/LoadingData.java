@@ -2,6 +2,9 @@ package com.example.administrator.connectweb;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Loader;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -11,8 +14,11 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,13 +67,20 @@ public class LoadingData extends AsyncTask<String,Void,List<Contact>> {
         return null;
     }
     private  Contact convertContact (JSONObject obj) throws JSONException {
+        Bitmap bitmap;
+        if(obj.getString("Picture")!=null){
+            bitmap = LoadImage("https://juanyuanzhang.000webhostapp.com/images/" + obj.getString("Picture").toString());
+        }else{
+            bitmap = LoadImage("https://juanyuanzhang.000webhostapp.com/images/supportmale.png");
+        }
+//        String pic = obj.getString("Picture");
         String name = obj.getString("Name");
         String phoneNum = obj.getString("Phone");
         String email = obj.getString("Email");
         String birthday = obj.getString("Birthday");
         Log.v("jsonObj=",obj.getString("Name").toString());
 
-        return new Contact(null, name, phoneNum, email, birthday);
+        return new Contact(bitmap, name, phoneNum, email, birthday);
 
     }
     @Override
@@ -81,5 +94,25 @@ public class LoadingData extends AsyncTask<String,Void,List<Contact>> {
     protected void onPostExecute(List<Contact> contactList) { //在背景執行完執行
         super.onPostExecute(contactList);
         dialog.dismiss();
+    }
+    private Bitmap LoadImage(String imageUrl){
+        Bitmap pic = null;
+        try{
+            URL url = new URL(imageUrl);
+            HttpURLConnection connection =(HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("GET");
+            connection.connect();
+
+            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                InputStream inputStream = connection.getInputStream();
+                pic = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
+                return pic ;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return pic;
     }
 }

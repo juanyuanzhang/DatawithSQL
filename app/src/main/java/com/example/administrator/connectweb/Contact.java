@@ -12,7 +12,7 @@ public class Contact {
     private String birth;
 
     public Contact(Bitmap pic, String name, String phone, String email, String birth) {
-        //this.pic = pic;
+        this.pic = pic;
         this.name = name;
         this.phone = phone;
         this.email = email;
